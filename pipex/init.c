@@ -6,7 +6,7 @@
 /*   By: dkham <dkham@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/25 14:02:01 by dkham             #+#    #+#             */
-/*   Updated: 2023/03/25 17:28:34 by dkham            ###   ########.fr       */
+/*   Updated: 2023/03/25 21:33:21 by dkham            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,12 @@
 // case2(./pipex here_doc LIMITER cmd cmd1 file)인지 확인한다
 // case 1이면 infile을 open => dup2(open(argv[1], O_RDONLY), 0);
 // case 2면 gnl을 통해 내용을 받는다
-void	init(int argc, char **argv, char **envp)
+t_info	*init(int argc, char **argv, char **envp)
 {
 	int		fd;
 	t_info	*info;
 
-	init_info(info);
+	init_info(argc, argv, info);
 	if (argc < 4)
 	{
 		perror("Error: not enough arguments\n");
@@ -31,6 +31,7 @@ void	init(int argc, char **argv, char **envp)
 		here_doc(argc, argv, envp, info);
 	else										 // case 1 : infile
 		infile(argc, argv, evnp, info);
+	return (info);
 }
 
 void	init_info(int argc, char **argv, t_info *info)
@@ -68,7 +69,7 @@ void	infile(int argc, char **argv, char **envp, t_info *info)
 		perror("Error: cannot open infile\n");
 		exit(1);
 	}
-	dup2(fd, 0); // stdin을 fd(file1)로 바꿈
+	info->input_fd = fd;
 }
 
 // here_doc
@@ -83,15 +84,18 @@ void	here_doc(int argc, char **argv, char **envp, t_info *info)
 	info->num_cmd = argc - 4; // cmd 수
 	get_cmd(argc, argv, info); // cmd 저장
 	get_path(envp, info); // path 저장
-	fd = open("temp.txt", O_WRONLY | O_CREAT | O_TRUNC, 0644); // 확인
+	fd = open("temp.txt", O_WRONLY | O_CREAT | O_APPEND, 0644); // 확인해야함
 	if (fd == -1)
 	{
 		perror("Error: cannot open file\n");
 		exit(1);
 	}
-	while (get_next_line(fd) != NULL)
+	info->input_fd = fd;
+	while (1)
 	{
 		line = get_next_line(fd);
+		if (line == NULL)
+			break ;
 		if (ft_strncmp(line, argv[2], ft_strlen(argv[2])) == 0)
 			break ;
 		ft_putstr_fd(line, fd);

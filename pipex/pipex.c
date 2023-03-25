@@ -6,7 +6,7 @@
 /*   By: dkham <dkham@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/24 20:54:04 by dkham             #+#    #+#             */
-/*   Updated: 2023/03/25 17:33:03 by dkham            ###   ########.fr       */
+/*   Updated: 2023/03/25 21:33:57 by dkham            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,9 @@
 // 각 cmd는 pipe를 통해 연결되어야 함
 int	main(int argc, char **argv, char **envp)
 {
-	init(argc, argv, envp);
-	run_cmd(argv, envp);
+	t_info	*info;
+
+	info = init(argc, argv, envp);
+	run_cmd(argc, argv, envp, info);
+	wait(NULL);
 }
