@@ -6,7 +6,7 @@
 /*   By: dkham <dkham@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/24 20:54:04 by dkham             #+#    #+#             */
-/*   Updated: 2023/03/25 21:33:57 by dkham            ###   ########.fr       */
+/*   Updated: 2023/03/26 17:13:12 by dkham            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,6 @@
 // 각 cmd가 자식 프로세스로 실행되어야 함
 // while 돌면서 각 cmd를 실행
 
-
 // 먼저 case 1인지 case2인지 확인한다
 // case 1이면 infile을 open => dup2(open(argv[1], O_RDONLY), 0);
 // case 2면 gnl을 통해 내용을 받는다
@@ -47,5 +46,4 @@ int	main(int argc, char **argv, char **envp)
 
 	info = init(argc, argv, envp);
 	run_cmd(argc, argv, envp, info);
-	wait(NULL);
 }

@@ -6,7 +6,7 @@
 /*   By: dkham <dkham@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/24 21:02:33 by dkham             #+#    #+#             */
-/*   Updated: 2023/03/25 17:26:38 by dkham            ###   ########.fr       */
+/*   Updated: 2023/03/26 15:20:32 by dkham            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 
 typedef struct s_info
 {
-	int		case; // 1: infile, 2: here_doc
+	int		cases;
 	int		num_cmd; // 커맨드 수
 	char 	**cmds; // 각 커맨드
 	char 	**paths; // envp에서 PATH=를 찾아 split한 것

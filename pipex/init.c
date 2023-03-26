@@ -6,16 +6,16 @@
 /*   By: dkham <dkham@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/25 14:02:01 by dkham             #+#    #+#             */
-/*   Updated: 2023/03/25 21:33:21 by dkham            ###   ########.fr       */
+/*   Updated: 2023/03/26 16:01:29 by dkham            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-// 먼저 case 1(./pipex file1 cmd1 cmd2 cmd3 ... cmdn file2)인지 
-// case2(./pipex here_doc LIMITER cmd cmd1 file)인지 확인한다
-// case 1이면 infile을 open => dup2(open(argv[1], O_RDONLY), 0);
-// case 2면 gnl을 통해 내용을 받는다
+// 먼저 cases 1(./pipex file1 cmd1 cmd2 cmd3 ... cmdn file2)인지 
+// cases2(./pipex here_doc LIMITER cmd cmd1 file)인지 확인한다
+// cases 1이면 infile을 open => dup2(open(argv[1], O_RDONLY), 0);
+// cases 2면 gnl을 통해 내용을 받는다
 t_info	*init(int argc, char **argv, char **envp)
 {
 	int		fd;
@@ -27,10 +27,10 @@ t_info	*init(int argc, char **argv, char **envp)
 		perror("Error: not enough arguments\n");
 		exit(1);
 	}
-	if (ft_strncmp(argv[1], "here_doc", 9) == 0) // case 2 : heredoc
+	if (ft_strncmp(argv[1], "here_doc", 9) == 0) // cases 2 : heredoc
 		here_doc(argc, argv, envp, info);
-	else										 // case 1 : infile
-		infile(argc, argv, evnp, info);
+	else										 // cases 1 : infile
+		infile(argc, argv, envp, info);
 	return (info);
 }
 
@@ -42,7 +42,7 @@ void	init_info(int argc, char **argv, t_info *info)
 		perror("Error: cannot allocate memory\n");
 		exit(1);
 	}
-	info->case = 0;
+	info->cases = 0;
 	info->num_cmd = 0;
 	info->cmds = NULL; // 내부도 다 NULL로 초기화?
 	info->paths = NULL; // 내부도 다 NULL로 초기화?
@@ -59,7 +59,7 @@ void	infile(int argc, char **argv, char **envp, t_info *info)
 {
 	int		fd;
 
-	info->case = 1; // case1: infile
+	info->cases = 1; // cases1: infile
 	info->num_cmd = argc - 3; // cmd 수
 	get_cmd(argc, argv, info); // cmd 저장
 	get_path(envp, info); // path 저장
@@ -80,7 +80,7 @@ void	here_doc(int argc, char **argv, char **envp, t_info *info)
 	char	*line;
 	int		fd;
 
-	info->case = 2; // case2: here_doc
+	info->cases = 2; // cases2: here_doc
 	info->num_cmd = argc - 4; // cmd 수
 	get_cmd(argc, argv, info); // cmd 저장
 	get_path(envp, info); // path 저장
@@ -114,7 +114,7 @@ void	get_cmd(int argc, char **argv, t_info *info)
 		perror("Error: cannot allocate memory\n");
 		exit(1);
 	}
-	if (info->case == 1) // case 1의 경우 argv[2], case 2의 경우 argv[3]부터 cmd가 시작
+	if (info->cases == 1) // cases 1의 경우 argv[2], cases 2의 경우 argv[3]부터 cmd가 시작
 		cmd_start = 2;
 	else
 		cmd_start = 3;
