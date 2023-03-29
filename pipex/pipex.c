@@ -6,7 +6,7 @@
 /*   By: dkham <dkham@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/24 20:54:04 by dkham             #+#    #+#             */
-/*   Updated: 2023/03/26 17:13:12 by dkham            ###   ########.fr       */
+/*   Updated: 2023/03/29 21:06:22 by dkham            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,5 +45,5 @@ int	main(int argc, char **argv, char **envp)
 	t_info	*info;
 
 	info = init(argc, argv, envp);
-	run_cmd(argc, argv, envp, info);
+	run_cmd(envp, info);
 }

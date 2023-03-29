@@ -6,13 +6,13 @@
 /*   By: dkham <dkham@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/25 15:34:50 by dkham             #+#    #+#             */
-/*   Updated: 2023/03/26 19:00:52 by dkham            ###   ########.fr       */
+/*   Updated: 2023/03/29 22:09:45 by dkham            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-void	run_cmd(int argc, char **argv, char **envp, t_info *info)
+void	run_cmd(char **envp, t_info *info)
 {
 	int		i;
 	pid_t	pid;
@@ -29,7 +29,7 @@ void	run_cmd(int argc, char **argv, char **envp, t_info *info)
 		else if (pid == 0)	//자식 프로세스 실행
 			child_proc(info, i, pipe_fd, envp); // 처음, 끝, 중간 커맨드 나눠서 구현
 		else //부모 프로세스 실행
-			parent_proc(info, i, pipe_fd);
+			parent_proc(pipe_fd);
 		i++;
 	}
 	while (i-- > 0)
@@ -77,6 +77,11 @@ void	handle_fd(t_info *info, int *pipe_fd, int i)
 	{
 		close(pipe_fd[0]); //필요?
 		close(pipe_fd[1]); // child에서 fd[1] 닫기 (outfile으로 출력하기 때문)
+		//printf("outfile: %s", info->outfile);
+		if (info->cases == 1)
+			info->output_fd = open(info->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644); // outfile 생성
+		else if (info->cases == 2)
+			info->output_fd = open(info->outfile, O_WRONLY | O_CREAT | O_APPEND, 0644); // outfile 생성
 		if (dup2(info->output_fd, 1) == -1) // outfile으로 출력
 			exit(1); // error 처리 추가
 		close(info->output_fd); // 필요?
@@ -90,7 +95,7 @@ void	handle_fd(t_info *info, int *pipe_fd, int i)
 	}
 }
 
-void	parent_proc(t_info *info, int i, int *pipe_fd)
+void	parent_proc(int *pipe_fd)
 {
 	close(pipe_fd[1]);
 	dup2(pipe_fd[0], 0); // 다음 포크 시 자식이 파이프에서 읽어올 수 있도록 pipe_fd[0]을 input으로 설정

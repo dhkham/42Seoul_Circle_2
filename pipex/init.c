@@ -6,7 +6,7 @@
 /*   By: dkham <dkham@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/25 14:02:01 by dkham             #+#    #+#             */
-/*   Updated: 2023/03/26 19:06:01 by dkham            ###   ########.fr       */
+/*   Updated: 2023/03/29 22:25:30 by dkham            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,10 @@
 // cases 2면 gnl을 통해 내용을 받는다
 t_info	*init(int argc, char **argv, char **envp)
 {
-	int		fd;
 	t_info	*info;
 
-	init_info(argc, argv, info);
+	info = NULL;
+	init_info(&info, argc, argv);
 	if (argc < 4)
 	{
 		perror("Error: not enough arguments\n");
@@ -34,22 +34,23 @@ t_info	*init(int argc, char **argv, char **envp)
 	return (info);
 }
 
-void	init_info(int argc, char **argv, t_info *info)
+void	init_info(t_info **info, int argc, char **argv)
 {
-	info = (t_info *)malloc(sizeof(t_info));
+	*info = (t_info *)malloc(sizeof(t_info));
 	if (info == NULL)
 	{
 		perror("Error: cannot allocate memory\n");
 		exit(1);
 	}
-	info->cases = 0;
-	info->num_cmd = 0;
-	info->cmds = NULL; // 내부도 다 NULL로 초기화?
-	info->paths = NULL; // 내부도 다 NULL로 초기화?
-	info->input_fd = 0;
-	info->output_fd = 0;
-	info->pipe_fd[0] = 0;
-	info->pipe_fd[1] = 0;
+	(*info)->cases = 0;
+	(*info)->num_cmd = 0;
+	(*info)->cmds = NULL; // 내부도 다 NULL로 초기화?
+	(*info)->paths = NULL; // 내부도 다 NULL로 초기화?
+	(*info)->input_fd = 0;
+	(*info)->output_fd = 0;
+	(*info)->pipe_fd[0] = 0;
+	(*info)->pipe_fd[1] = 0;
+	(*info)->outfile = argv[argc - 1];
 }
 
 // infile
@@ -61,7 +62,7 @@ void	infile(int argc, char **argv, char **envp, t_info *info)
 
 	info->cases = 1; // cases1: infile
 	info->num_cmd = argc - 3; // cmd 수
-	get_cmd(argc, argv, info); // cmd 저장
+	get_cmd(argv, info); // cmd 저장
 	get_path(envp, info); // path 저장
 	fd = open(argv[1], O_RDONLY);
 	if (fd == -1)
@@ -79,10 +80,11 @@ void	here_doc(int argc, char **argv, char **envp, t_info *info)
 {
 	char	*line;
 	int		fd;
+	char	*temp;
 
 	info->cases = 2; // cases2: here_doc
 	info->num_cmd = argc - 4; // cmd 수
-	get_cmd(argc, argv, info); // cmd 저장
+	get_cmd(argv, info); // cmd 저장
 	get_path(envp, info); // path 저장
 	fd = open("temp.txt", O_WRONLY | O_CREAT | O_APPEND, 0644); // 확인해야함
 	if (fd == -1)
@@ -91,18 +93,20 @@ void	here_doc(int argc, char **argv, char **envp, t_info *info)
 		exit(1);
 	}
 	info->input_fd = fd;
+	temp = ft_strjoin(argv[2], "\n");
 	while (1)
 	{
-		line = get_next_line(fd);
+		line = get_next_line(1);
 		if (line == NULL)
 			break ;
-		if (ft_strncmp(line, argv[2], ft_strlen(argv[2])) == 0)
+		if (ft_strncmp(line, temp, ft_strlen(argv[2]) + 1) == 0)
 			break ;
 		ft_putstr_fd(line, fd);
 	}
+	free(temp);
 }
 
-void	get_cmd(int argc, char **argv, t_info *info)
+void	get_cmd(char **argv, t_info *info)
 {
 	int		i;
 	int		cmd_start;
