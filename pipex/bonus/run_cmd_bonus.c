@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   run_cmd.c                                          :+:      :+:    :+:   */
+/*   run_cmd_bonus.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dkham <dkham@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/25 15:34:50 by dkham             #+#    #+#             */
-/*   Updated: 2023/03/31 20:18:24 by dkham            ###   ########.fr       */
+/*   Updated: 2023/03/31 20:29:45 by dkham            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "pipex_bonus.h"
 
 void	run_cmd(char **envp, t_info *info)
 {
@@ -72,7 +72,7 @@ void	handle_fd(t_info *info, int *pipe_fd, int i)
 		last_cmd(info, pipe_fd, i);
 	else // 중간 커맨드
 	{
-		close(pipe_fd[0]); // parent에서 dup2(pipe_fd[0], 0); 해준 후 포크 해줘서 필요 없는 듯
+		close(pipe_fd[0]); // parent에서 dup2(pipe_fd[0], 0); 해준 후 포크 해줘서 필요 없는듯
 		if (dup2(pipe_fd[1], 1) == -1) // 출력 시 pipe_fd[1]로 출력
 			exit(1); // error 처리 추가
 		close(pipe_fd[1]);
