@@ -6,7 +6,7 @@
 /*   By: dkham <dkham@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/25 14:02:01 by dkham             #+#    #+#             */
-/*   Updated: 2023/03/31 21:41:38 by dkham            ###   ########.fr       */
+/*   Updated: 2023/04/01 21:11:47 by dkham            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,9 +61,6 @@ void	infile(int argc, char **argv, char **envp, t_info *info)
 	get_path(envp, info); // path 저장
 	fd = open(argv[1], O_RDONLY);
 	if (fd == -1)
-	{
 		perror("Error: cannot open infile\n");
-		exit(1);
-	}
 	info->input_fd = fd;
 }

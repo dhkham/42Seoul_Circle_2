@@ -6,13 +6,13 @@
 /*   By: dkham <dkham@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/25 14:02:01 by dkham             #+#    #+#             */
-/*   Updated: 2023/03/31 21:36:42 by dkham            ###   ########.fr       */
+/*   Updated: 2023/04/01 21:08:49 by dkham            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex_bonus.h"
 
-// 먼저 cases 1(./pipex file1 cmd1 cmd2 cmd3 ... cmdn file2)인지 
+// 먼저 cases 1(./pipex file1 cmd1 cmd2 cmd3 ... cmdn file2)인지
 // cases2(./pipex here_doc LIMITER cmd cmd1 file)인지 확인한다
 // cases 1이면 infile을 open => fd = open(argv[1], O_RDONLY);
 // cases 2면 gnl을 통해 내용을 받는다
@@ -66,10 +66,7 @@ void	infile(int argc, char **argv, char **envp, t_info *info)
 	get_path(envp, info); // path 저장
 	fd = open(argv[1], O_RDONLY);
 	if (fd == -1)
-	{
 		perror("Error: cannot open infile\n");
-		exit(1);
-	}
 	info->input_fd = fd;
 }
 
@@ -86,7 +83,7 @@ void	here_doc(int argc, char **argv, char **envp, t_info *info)
 	info->num_cmd = argc - 4; // cmd 수
 	get_cmd(argv, info); // cmd 저장
 	get_path(envp, info); // path 저장
-	fd = open("temp.txt", O_WRONLY | O_CREAT | O_APPEND, 0644); // 확인해야함
+	fd = open("temp.txt", O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fd == -1)
 	{
 		perror("Error: cannot open file\n");
@@ -101,7 +98,9 @@ void	here_doc(int argc, char **argv, char **envp, t_info *info)
 		if (ft_strncmp(line, temp, ft_strlen(argv[2]) + 1) == 0)
 			break ;
 		ft_putstr_fd(line, fd);
+		free(line);
 	}
+	free(line);
 	free(temp);
 	fd = open("temp.txt", O_RDONLY);
 	info->input_fd = fd;

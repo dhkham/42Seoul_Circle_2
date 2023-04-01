@@ -6,7 +6,7 @@
 /*   By: dkham <dkham@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/25 15:34:50 by dkham             #+#    #+#             */
-/*   Updated: 2023/03/31 20:29:45 by dkham            ###   ########.fr       */
+/*   Updated: 2023/04/01 20:18:40 by dkham            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,14 @@ void	child_proc(t_info *info, int i, int *pipe_fd, char **envp)
 	{
 		path = ft_strjoin(info->paths[j], "/"); // path에 / 붙여서 path/ 만듦
 		cmd_split = ft_split(info->cmds[i], ' '); // "wc -l" 있으면 wc만 가져옴
-		cmd = ft_strjoin(path, cmd_split[0]); // path/cmd 앞부분 만듦
+		if (access(cmd_split[0], F_OK) == 0) // 절대경로(/bin/ls 다 들어왔을 경우 처리)
+		{
+			cmd = ft_strdup(cmd_split[0]);
+			free(path);
+			break ;
+		}
+		else
+			cmd = ft_strjoin(path, cmd_split[0]); // path/cmd 앞부분 만듦
 		free(path);
 		if (access(cmd, F_OK) == 0) // returns 0 if the file or directory exists (F_OK flag)
 			break ;

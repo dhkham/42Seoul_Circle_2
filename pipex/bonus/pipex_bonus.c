@@ -6,7 +6,7 @@
 /*   By: dkham <dkham@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/24 20:54:04 by dkham             #+#    #+#             */
-/*   Updated: 2023/03/31 20:23:54 by dkham            ###   ########.fr       */
+/*   Updated: 2023/04/01 20:54:41 by dkham            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,5 +46,5 @@ int	main(int argc, char **argv, char **envp)
 	t_info	*info;
 
 	info = init(argc, argv, envp); // infile인지 here_doc인지 확인, cmd/path 저장, 파일 open
-	run_cmd(envp, info); // 
+	run_cmd(envp, info);
 }
