@@ -6,7 +6,7 @@
 /*   By: dkham <dkham@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/24 21:02:33 by dkham             #+#    #+#             */
-/*   Updated: 2023/04/02 12:30:22 by dkham            ###   ########.fr       */
+/*   Updated: 2023/04/02 12:35:51 by dkham            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@
 # include "stdlib.h"
 # include "stdio.h"
 # include "fcntl.h"
-# include "../get_next_line/get_next_line_bonus.h"
-# include "../libft/libft.h"
+# include "./get_next_line/get_next_line_bonus.h"
+# include "./libft/libft.h"
 
 typedef struct s_info
 {
