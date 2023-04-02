@@ -6,16 +6,12 @@
 /*   By: dkham <dkham@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/25 14:02:01 by dkham             #+#    #+#             */
-/*   Updated: 2023/04/01 21:08:49 by dkham            ###   ########.fr       */
+/*   Updated: 2023/04/02 11:38:27 by dkham            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex_bonus.h"
 
-// 먼저 cases 1(./pipex file1 cmd1 cmd2 cmd3 ... cmdn file2)인지
-// cases2(./pipex here_doc LIMITER cmd cmd1 file)인지 확인한다
-// cases 1이면 infile을 open => fd = open(argv[1], O_RDONLY);
-// cases 2면 gnl을 통해 내용을 받는다
 t_info	*init(int argc, char **argv, char **envp)
 {
 	t_info	*info;
@@ -27,10 +23,20 @@ t_info	*init(int argc, char **argv, char **envp)
 		perror("Error: not enough arguments\n");
 		exit(1);
 	}
-	if (ft_strncmp(argv[1], "here_doc", 9) == 0) // cases 2 : heredoc
+	if (ft_strncmp(argv[1], "here_doc", 9) == 0)
+	{
+		info->cases = 2;
+		info->num_cmd = argc - 4;
 		here_doc(argc, argv, envp, info);
-	else										 // cases 1 : infile
+	}
+	else
+	{
+		info->cases = 1;
+		info->num_cmd = argc - 3;
 		infile(argc, argv, envp, info);
+	}
+	get_cmd(argv, info);
+	get_path(envp, info);
 	return (info);
 }
 
@@ -44,8 +50,8 @@ void	init_info(t_info **info, int argc, char **argv)
 	}
 	(*info)->cases = 0;
 	(*info)->num_cmd = 0;
-	(*info)->cmds = NULL; // 내부도 다 NULL로 초기화?
-	(*info)->paths = NULL; // 내부도 다 NULL로 초기화?
+	(*info)->cmds = NULL;
+	(*info)->paths = NULL;
 	(*info)->input_fd = 0;
 	(*info)->output_fd = 0;
 	(*info)->pipe_fd[0] = 0;
@@ -53,36 +59,22 @@ void	init_info(t_info **info, int argc, char **argv)
 	(*info)->outfile = argv[argc - 1];
 }
 
-// infile
-// ./pipex file1 cmd1 cmd2 cmd3 ... cmdn file2
-// should behave like: < file1 cmd1 | cmd2 | ... | cmdn > file2
 void	infile(int argc, char **argv, char **envp, t_info *info)
 {
 	int		fd;
 
-	info->cases = 1; // cases1: infile
-	info->num_cmd = argc - 3; // cmd 수
-	get_cmd(argv, info); // cmd 저장
-	get_path(envp, info); // path 저장
-	fd = open(argv[1], O_RDONLY);
+	fd = open(argv[1], O_RDONLY, 0644);
 	if (fd == -1)
 		perror("Error: cannot open infile\n");
 	info->input_fd = fd;
 }
 
-// here_doc
-// ./pipex here_doc LIMITER cmd cmd1 file
-// should behave like: cmd << LIMITER | cmd1 >> file
 void	here_doc(int argc, char **argv, char **envp, t_info *info)
 {
 	char	*line;
 	int		fd;
 	char	*temp;
 
-	info->cases = 2; // cases2: here_doc
-	info->num_cmd = argc - 4; // cmd 수
-	get_cmd(argv, info); // cmd 저장
-	get_path(envp, info); // path 저장
 	fd = open("temp.txt", O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fd == -1)
 	{
